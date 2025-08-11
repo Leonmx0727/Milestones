@@ -43,3 +43,149 @@ function render_flash(): void {
         }
     }
 }
+
+
+
+/**
+ * UCID: lm64 | Date: 10/08/2025
+ * Details: Minimal RapidAPI GET helper; returns [success, data|message].
+ */
+
+function api_get(string $path, array $query = []): array {
+    $url = API_BASE_URL . $path;
+    if (!empty($query)) {
+        $url .= '?' . http_build_query($query);
+    }
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 20,
+        CURLOPT_HTTPHEADER => [
+            'X-RapidAPI-Key: ' . RAPIDAPI_KEY,
+            'X-RapidAPI-Host: ' . RAPIDAPI_HOST,
+        ],
+    ]);
+    $raw = curl_exec($ch);
+    $err = curl_error($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    if ($err) {
+        error_log('api_get curl error: ' . $err);
+        return [false, 'We could not reach the football API. Please try again.'];
+    }
+    $json = json_decode($raw, true);
+    if ($status >= 400 || !is_array($json)) {
+        error_log('api_get bad response (' . $status . '): ' . substr($raw,0,500));
+        return [false, 'The football API returned an unexpected response.'];
+    }
+    return [true, $json];
+}
+
+/**
+ * UCID: lm64 | Date: 10/08/2025
+ * Details: Upsert a league row by api_league_id; returns ['inserted'=>n,'updated'=>n]
+ * Expected $row keys: api_league_id, name, type, country, logo_url, season_current, is_api, api_last_fetched
+ */
+function upsert_league(array $row): array {
+    $sql = "INSERT INTO leagues (api_league_id,name,type,country,logo_url,season_current,is_api,api_last_fetched)
+            VALUES (:api_league_id,:name,:type,:country,:logo_url,:season_current,:is_api,:api_last_fetched)
+            ON DUPLICATE KEY UPDATE
+              name=VALUES(name),
+              type=VALUES(type),
+              country=VALUES(country),
+              logo_url=VALUES(logo_url),
+              season_current=VALUES(season_current),
+              is_api=VALUES(is_api),
+              api_last_fetched=VALUES(api_last_fetched)";
+    $stmt = db()->prepare($sql);
+    $stmt->execute([
+        ':api_league_id'   => $row['api_league_id'] ?? null,
+        ':name'            => $row['name'] ?? null,
+        ':type'            => $row['type'] ?? null,
+        ':country'         => $row['country'] ?? null,
+        ':logo_url'        => $row['logo_url'] ?? null,
+        ':season_current'  => !empty($row['season_current']) ? 1 : 0,
+        ':is_api'          => 1,
+        ':api_last_fetched'=> date('Y-m-d H:i:s'),
+    ]);
+    return ['inserted' => (int)db()->lastInsertId() ? 1 : 0, 'updated' => $stmt->rowCount() > 0 ? 1 : 0];
+}
+
+/**
+ * UCID: lm64 | Date: 10/08/2025
+ * Details: Upsert a team row by api_team_id.
+ * Expected $row keys: api_team_id,name,code,country,founded,city,venue_name,logo_url,last_league_api_id,last_season_hint
+ */
+function upsert_team(array $row): array {
+    $sql = "INSERT INTO teams (api_team_id,name,code,country,founded,city,venue_name,logo_url,last_league_api_id,last_season_hint,is_api,api_last_fetched)
+            VALUES (:api_team_id,:name,:code,:country,:founded,:city,:venue_name,:logo_url,:last_league_api_id,:last_season_hint,1,:api_last_fetched)
+            ON DUPLICATE KEY UPDATE
+              name=VALUES(name),
+              code=VALUES(code),
+              country=VALUES(country),
+              founded=VALUES(founded),
+              city=VALUES(city),
+              venue_name=VALUES(venue_name),
+              logo_url=VALUES(logo_url),
+              last_league_api_id=VALUES(last_league_api_id),
+              last_season_hint=VALUES(last_season_hint),
+              is_api=VALUES(is_api),
+              api_last_fetched=VALUES(api_last_fetched)";
+    $stmt = db()->prepare($sql);
+    $stmt->execute([
+        ':api_team_id'        => $row['api_team_id'] ?? null,
+        ':name'               => $row['name'] ?? null,
+        ':code'               => $row['code'] ?? null,
+        ':country'            => $row['country'] ?? null,
+        ':founded'            => $row['founded'] ?? null,
+        ':city'               => $row['city'] ?? null,
+        ':venue_name'         => $row['venue_name'] ?? null,
+        ':logo_url'           => $row['logo_url'] ?? null,
+        ':last_league_api_id' => $row['last_league_api_id'] ?? null,
+        ':last_season_hint'   => $row['last_season_hint'] ?? null,
+        ':api_last_fetched'   => date('Y-m-d H:i:s'),
+    ]);
+    return ['inserted' => (int)db()->lastInsertId() ? 1 : 0, 'updated' => $stmt->rowCount() > 0 ? 1 : 0];
+}
+
+/**
+ * Render navigation bar based on user role
+ */
+function render_navbar(string $current_page = ''): void {
+    require_once __DIR__ . '/auth.php';
+    $user = current_user();
+    $isAdmin = has_role('admin');
+    
+    echo '<div class="nav">';
+    echo '<a href="' . BASE_URL . '/pages/home.php"' . ($current_page === 'home' ? ' class="active"' : '') . '>Home</a>';
+    echo '<a href="' . BASE_URL . '/pages/dashboard.php"' . ($current_page === 'dashboard' ? ' class="active"' : '') . '>Dashboard</a>';
+    echo '<a href="' . BASE_URL . '/pages/leagues_list.php"' . ($current_page === 'leagues' ? ' class="active"' : '') . '>Leagues</a>';
+    echo '<a href="' . BASE_URL . '/pages/teams_list.php"' . ($current_page === 'teams' ? ' class="active"' : '') . '>Teams</a>';
+    
+    if ($isAdmin) {
+        echo '<a href="' . BASE_URL . '/pages/api_management.php"' . ($current_page === 'api' ? ' class="active"' : '') . '>API</a>';
+    }
+    
+    echo '<div class="nav-right">';
+    echo '<span>Welcome, ' . e($user['username']) . '</span>';
+    echo '<a href="' . BASE_URL . '/pages/profile.php"' . ($current_page === 'profile' ? ' class="active"' : '') . '>Profile</a>';
+    echo '<a href="' . BASE_URL . '/pages/logout.php">Logout</a>';
+    echo '</div>';
+    echo '</div>';
+}
+
+/**
+ * Render admin action buttons for list pages
+ */
+function render_admin_actions(string $page_type): void {
+    if (!has_role('admin')) return;
+    
+    echo '<div class="admin-actions" style="margin-bottom: 20px;">';
+    if ($page_type === 'leagues') {
+        echo '<a href="' . BASE_URL . '/pages/create_league.php" class="button primary">Create League</a>';
+    } elseif ($page_type === 'teams') {
+        echo '<a href="' . BASE_URL . '/pages/create_team.php" class="button primary">Create Team</a>';
+    }
+    echo '</div>';
+}

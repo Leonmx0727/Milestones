@@ -1,7 +1,7 @@
 <?php
 /**
  * UCID: lm64d | Date: 09/08/2025
- * Details: View & edit profile; change password (requires current password).
+ * Details: user profile page
  */
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -97,14 +97,7 @@ $user = current_user(); // refresh in case we updated
   <script src="<?= BASE_URL ?>/js/scripts.js" defer></script>
 </head>
 <body>
-<div class="nav">
-  <a href="<?= BASE_URL ?>/pages/home.php">Home</a>
-  <a href="<?= BASE_URL ?>/pages/dashboard.php">Dashboard</a>
-  <div class="nav-right">
-    <a href="<?= BASE_URL ?>/pages/profile.php">Profile</a>
-    <a href="<?= BASE_URL ?>/pages/logout.php">Logout</a>
-  </div>
-</div>
+<?php render_navbar('profile'); ?>
 
 <div class="container">
   <?php render_flash(); ?>
