@@ -141,3 +141,11 @@ function validateTeamForm(form) {
   if (founded && (!/^\d{4}$/.test(founded) || +founded < 1850 || +founded > 2100)) { alert("Founded must be a valid 4-digit year."); return false; }
   return true;
 }
+
+function validateAdminAssocFilters(form) {
+  const limit = form.limit.value.trim();
+  const page  = form.page.value.trim();
+  if (!limit || +limit < 1 || +limit > 100) { alert("Limit must be between 1 and 100."); return false; }
+  if (page && +page < 1) { alert("Page must be 1 or greater."); return false; }
+  return true;
+}

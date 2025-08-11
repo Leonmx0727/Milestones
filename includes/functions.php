@@ -160,11 +160,26 @@ function render_navbar(string $current_page = ''): void {
     echo '<div class="nav">';
     echo '<a href="' . BASE_URL . '/pages/home.php"' . ($current_page === 'home' ? ' class="active"' : '') . '>Home</a>';
     echo '<a href="' . BASE_URL . '/pages/dashboard.php"' . ($current_page === 'dashboard' ? ' class="active"' : '') . '>Dashboard</a>';
+    echo '<a href="' . BASE_URL . '/pages/my_teams.php"' . ($current_page === 'my_teams' ? ' class="active"' : '') . '>My Teams</a>';
+    echo '<a href="' . BASE_URL . '/pages/my_leagues.php"' . ($current_page === 'my_leagues' ? ' class="active"' : '') . '>My Leagues</a>';
     echo '<a href="' . BASE_URL . '/pages/leagues_list.php"' . ($current_page === 'leagues' ? ' class="active"' : '') . '>Leagues</a>';
     echo '<a href="' . BASE_URL . '/pages/teams_list.php"' . ($current_page === 'teams' ? ' class="active"' : '') . '>Teams</a>';
     
     if ($isAdmin) {
-        echo '<a href="' . BASE_URL . '/pages/api_management.php"' . ($current_page === 'api' ? ' class="active"' : '') . '>API</a>';
+        echo '<div class="nav-dropdown">';
+        echo '<a href="#" class="nav-dropdown-toggle">Admin ▼</a>';
+        echo '<div class="nav-dropdown-menu">';
+        echo '<a href="' . BASE_URL . '/pages/api_management.php">API Management</a>';
+        echo '<a href="' . BASE_URL . '/pages/admin_associate.php">Bulk Associate</a>';
+        echo '<a href="' . BASE_URL . '/pages/admin_associations_teams.php">All User-Team Associations</a>';
+        echo '<a href="' . BASE_URL . '/pages/admin_associations_leagues.php">All User-League Associations</a>';
+        echo '<a href="' . BASE_URL . '/pages/admin_user_roles.php">User Role Associations</a>';
+        echo '<a href="' . BASE_URL . '/pages/teams_unassociated.php">Unassociated Teams</a>';
+        echo '<a href="' . BASE_URL . '/pages/leagues_unassociated.php">Unassociated Leagues</a>';
+        echo '<a href="' . BASE_URL . '/pages/leagues_create.php">Create League</a>';
+        echo '<a href="' . BASE_URL . '/pages/teams_create.php">Create Team</a>';
+        echo '</div>';
+        echo '</div>';
     }
     
     echo '<div class="nav-right">';
@@ -183,9 +198,37 @@ function render_admin_actions(string $page_type): void {
     
     echo '<div class="admin-actions" style="margin-bottom: 20px;">';
     if ($page_type === 'leagues') {
-        echo '<a href="' . BASE_URL . '/pages/create_league.php" class="button primary">Create League</a>';
+        echo '<a href="' . BASE_URL . '/pages/leagues_create.php" class="button primary">Create League</a>';
     } elseif ($page_type === 'teams') {
-        echo '<a href="' . BASE_URL . '/pages/create_team.php" class="button primary">Create Team</a>';
+        echo '<a href="' . BASE_URL . '/pages/teams_create.php" class="button primary">Create Team</a>';
     }
     echo '</div>';
 }
+
+
+/**
+ * UCID: LM64 | Date: 11/08/2025
+ * Details: Association helpers for favorites/follows.
+ */
+function is_team_favorited(int $user_id, int $team_id): bool {
+    try {
+        $s = db()->prepare('SELECT 1 FROM user_team_favorites WHERE user_id=? AND team_id=? LIMIT 1');
+        $s->execute([$user_id, $team_id]);
+        return (bool)$s->fetchColumn();
+    } catch (Throwable $e) {
+        error_log('is_team_favorited: '.$e->getMessage());
+        return false;
+    }
+}
+
+function is_league_followed(int $user_id, int $league_id): bool {
+    try {
+        $s = db()->prepare('SELECT 1 FROM user_league_follows WHERE user_id=? AND league_id=? LIMIT 1');
+        $s->execute([$user_id, $league_id]);
+        return (bool)$s->fetchColumn();
+    } catch (Throwable $e) {
+        error_log('is_league_followed: '.$e->getMessage());
+        return false;
+    }
+}
+
