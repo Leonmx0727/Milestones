@@ -34,19 +34,25 @@ try {
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css">
 </head>
 <body>
-<div class="nav">
-  <a href="<?= BASE_URL ?>/pages/leagues_list.php">Leagues</a>
-  <div class="nav-right">
-    <a href="<?= BASE_URL ?>/pages/logout.php">Logout</a>
-  </div>
-</div>
+<?php render_navbar('leagues'); ?>
 
 <div class="container">
   <?php render_flash(); ?>
   <h1><?= e($row['name']) ?></h1>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    <div><strong>Type:</strong> <?= e($row['type'] ?? '—') ?></div>
+  <?php
+  $uid = current_user()['id'];
+  $followed = is_league_followed($uid, (int)$row['id']);
+  ?>
+  <div style="margin-top:12px">
+    <?php if ($followed): ?>
+      <a href="<?= BASE_URL ?>/pages/follow_league.php?action=remove&id=<?= (int)$row['id'] ?>" class="button secondary" style="padding:8px 12px;border-radius:8px;background:#6c757d;color:#fff;text-decoration:none">✖ Unfollow League</a>
+    <?php else: ?>
+      <a href="<?= BASE_URL ?>/pages/follow_league.php?action=add&id=<?= (int)$row['id'] ?>" class="button" style="padding:8px 12px;border-radius:8px;background:#0d6efd;color:#fff;text-decoration:none">⭐ Follow League</a>
+    <?php endif; ?>
+  </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div><strong>Type:</strong> <?= e($row['type'] ?? '') ?></div>
     <div><strong>Country:</strong> <?= e($row['country'] ?? '—') ?></div>
     <div><strong>Current Season:</strong> <?= !empty($row['season_current']) ? 'Yes' : 'No' ?></div>
     <div><strong>Source:</strong> <?= !empty($row['is_api']) ? 'API' : 'Manual' ?></div>

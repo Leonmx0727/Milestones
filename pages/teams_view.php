@@ -31,16 +31,25 @@ try {
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css">
 </head>
 <body>
-<div class="nav">
-  <a href="<?= BASE_URL ?>/pages/teams_list.php">Teams</a>
-  <div class="nav-right"><a href="<?= BASE_URL ?>/pages/logout.php">Logout</a></div>
-</div>
+<?php render_navbar('teams'); ?>
 
 <div class="container">
   <?php render_flash(); ?>
   <h1><?= e($row['name']) ?></h1>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <?php
+  $uid = current_user()['id'];
+  $favorited = is_team_favorited($uid, (int)$row['id']);
+  ?>
+  <div style="margin-top:12px">
+    <?php if ($favorited): ?>
+      <a href="<?= BASE_URL ?>/pages/favorite_team.php?action=remove&id=<?= (int)$row['id'] ?>" class="button secondary" style="padding:8px 12px;border-radius:8px;background:#6c757d;color:#fff;text-decoration:none">✖ Remove from Favorites</a>
+    <?php else: ?>
+      <a href="<?= BASE_URL ?>/pages/favorite_team.php?action=add&id=<?= (int)$row['id'] ?>" class="button" style="padding:8px 12px;border-radius:8px;background:#0d6efd;color:#fff;text-decoration:none">⭐ Add to Favorites</a>
+    <?php endif; ?>
+  </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
     <div><strong>Code:</strong> <?= e($row['code'] ?? '—') ?></div>
     <div><strong>Country:</strong> <?= e($row['country'] ?? '—') ?></div>
     <div><strong>Founded:</strong> <?= e($row['founded'] ?? '—') ?></div>

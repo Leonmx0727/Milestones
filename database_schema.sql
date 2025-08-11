@@ -32,7 +32,6 @@ CREATE TABLE user_roles (
 INSERT IGNORE INTO roles (name, description) VALUES ('user','Basic user');
 INSERT IGNORE INTO roles (name, description) VALUES ('admin','Administrator');
 
-
 CREATE TABLE IF NOT EXISTS leagues (
     id                BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     api_league_id     INT UNSIGNED NULL,                -- API-Football league.id (unique when present)
@@ -75,4 +74,31 @@ CREATE TABLE IF NOT EXISTS teams (
     KEY idx_teams_country (country),
     KEY idx_teams_lastctx (last_league_api_id, last_season_hint),
     KEY idx_teams_created (created)
+) ENGINE=InnoDB;
+
+
+
+-- Milestone 3
+-- Users - Teams (favorites)
+CREATE TABLE IF NOT EXISTS user_team_favorites (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  team_id BIGINT UNSIGNED NOT NULL,
+  created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  modified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_user_team (user_id, team_id),
+  CONSTRAINT fk_utf_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_utf_team  FOREIGN KEY (team_id) REFERENCES teams(id)  ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Users - Leagues (follows)
+CREATE TABLE IF NOT EXISTS user_league_follows (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  league_id BIGINT UNSIGNED NOT NULL,
+  created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  modified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_user_league (user_id, league_id),
+  CONSTRAINT fk_ulf_user   FOREIGN KEY (user_id)   REFERENCES users(id)    ON DELETE CASCADE,
+  CONSTRAINT fk_ulf_league FOREIGN KEY (league_id) REFERENCES leagues(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

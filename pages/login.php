@@ -49,10 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <div class="nav">
-  <a href="<?= BASE_URL ?>/pages/home.php">Home</a>
-  <div class="nav-right">
-    <a href="<?= BASE_URL ?>/pages/register.php">Register</a>
-  </div>
+  <a href="<?= BASE_URL ?>/pages/login.php">Login</a>
+  <a href="<?= BASE_URL ?>/pages/register.php">Register</a>
 </div>
 
 <div class="container">

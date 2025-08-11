@@ -16,14 +16,7 @@ $user = current_user();
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/styles.css">
 </head>
 <body>
-<div class="nav">
-  <a href="<?= BASE_URL ?>/pages/home.php">Home</a>
-  <a href="<?= BASE_URL ?>/pages/dashboard.php">Dashboard</a>
-  <div class="nav-right">
-    <a href="<?= BASE_URL ?>/pages/profile.php">Profile</a>
-    <a href="<?= BASE_URL ?>/pages/logout.php">Logout</a>
-  </div>
-</div>
+<?php render_navbar('home'); ?>
 
 <div class="container">
   <?php render_flash(); ?>
