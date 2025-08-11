@@ -1,7 +1,7 @@
 <?php
 /**
  * UCID: lm64 | Date: 08/08/2025
- * Details: Register new users with HTML/JS/PHP validation and sticky form.
+ * Details: user registration page
  */
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';
