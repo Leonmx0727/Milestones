@@ -1,7 +1,7 @@
 <?php
 /**
  * UCID: lm64 | Date: 09/08/2025
- * Details: Login via username OR email + password. Friendly errors, sessions.
+ * Details: login page
  */
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/auth.php';

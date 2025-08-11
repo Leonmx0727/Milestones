@@ -1,11 +1,12 @@
 <?php
 /**
  * UCID: LM64 | Date: 07/08/2025
- * Details: PDO connection helper (singleton).
+ * Details: my database connection file
  */
 
 require_once __DIR__ . '/config.php';
 
+// pdo connection
 function db(): PDO {
     static $pdo = null;
     if ($pdo === null) {
