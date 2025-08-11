@@ -67,12 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="<?= BASE_URL ?>/js/scripts.js" defer></script>
 </head>
 <body>
-<?php /* Simple Nav */ require_once __DIR__ . '/../includes/auth.php'; ?>
 <div class="nav">
-  <a href="<?= BASE_URL ?>/pages/home.php">Home</a>
-  <div class="nav-right">
-    <a href="<?= BASE_URL ?>/pages/login.php">Login</a>
-  </div>
+  <a href="<?= BASE_URL ?>/pages/login.php">Login</a>
+  <a href="<?= BASE_URL ?>/pages/register.php">Register</a>
 </div>
 
 <div class="container">

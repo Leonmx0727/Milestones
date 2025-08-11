@@ -44,10 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="<?= BASE_URL ?>/js/scripts.js" defer></script>
 </head>
 <body>
-<div class="nav">
-  <a href="<?= BASE_URL ?>/pages/teams_list.php">Teams</a>
-  <div class="nav-right"><a href="<?= BASE_URL ?>/pages/logout.php">Logout</a></div>
-</div>
+<?php render_navbar('admin'); ?>
 
 <div class="container">
   <?php render_flash(); ?>

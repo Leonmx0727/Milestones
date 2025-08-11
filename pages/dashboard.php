@@ -62,6 +62,14 @@ require_login();
       <a href="<?= BASE_URL ?>/pages/home.php">Home</a>
     </div>
     <div class="dashboard-card">
+      <div class="dashboard-icon"><i class="fa fa-star"></i></div>
+      <a href="<?= BASE_URL ?>/pages/my_teams.php">My Teams</a>
+    </div>
+    <div class="dashboard-card">
+      <div class="dashboard-icon"><i class="fa fa-heart"></i></div>
+      <a href="<?= BASE_URL ?>/pages/my_leagues.php">My Leagues</a>
+    </div>
+    <div class="dashboard-card">
       <div class="dashboard-icon"><i class="fa fa-trophy"></i></div>
       <a href="<?= BASE_URL ?>/pages/leagues_list.php">Leagues List</a>
     </div>
@@ -79,12 +87,36 @@ require_login();
         <a href="<?= BASE_URL ?>/pages/api_management.php">API Management</a>
       </div>
       <div class="dashboard-card">
-        <div class="dashboard-icon"><i class="fa fa-plus"></i></div>
-        <a href="<?= BASE_URL ?>/pages/create_league.php">Create League</a>
+        <div class="dashboard-icon"><i class="fa fa-link"></i></div>
+        <a href="<?= BASE_URL ?>/pages/admin_associate.php">Bulk Associate</a>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-icon"><i class="fa fa-list"></i></div>
+        <a href="<?= BASE_URL ?>/pages/admin_associations_teams.php">All User-Team Associations</a>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-icon"><i class="fa fa-list-check"></i></div>
+        <a href="<?= BASE_URL ?>/pages/admin_associations_leagues.php">All User-League Associations</a>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-icon"><i class="fa fa-user-gear"></i></div>
+        <a href="<?= BASE_URL ?>/pages/admin_user_roles.php">User Role Associations</a>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-icon"><i class="fa fa-users-slash"></i></div>
+        <a href="<?= BASE_URL ?>/pages/teams_unassociated.php">Unassociated Teams</a>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-icon"><i class="fa fa-trophy-slash"></i></div>
+        <a href="<?= BASE_URL ?>/pages/leagues_unassociated.php">Unassociated Leagues</a>
       </div>
       <div class="dashboard-card">
         <div class="dashboard-icon"><i class="fa fa-plus"></i></div>
-        <a href="<?= BASE_URL ?>/pages/create_team.php">Create Team</a>
+        <a href="<?= BASE_URL ?>/pages/leagues_create.php">Create League</a>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-icon"><i class="fa fa-plus"></i></div>
+        <a href="<?= BASE_URL ?>/pages/teams_create.php">Create Team</a>
       </div>
     <?php endif; ?>
     <div class="dashboard-card">
